@@ -15,14 +15,9 @@
 package controller
 
 import (
-	"os"
 	"time"
 
-	sigar "github.com/cloudfoundry/gosigar"
-	"go.uber.org/zap"
-
 	rmpb "github.com/pingcap/kvproto/pkg/resource_manager"
-	"github.com/pingcap/log"
 )
 
 // RequestUnit is the basic unit of the resource request management, which has two types:
@@ -300,13 +295,15 @@ func getSQLProcessCPUTime(isSingleGroupByKeyspace bool) float64 {
 }
 
 func getSysProcessCPUTime() float64 {
-	pid := os.Getpid()
-	cpuTime := sigar.ProcTime{}
-	if err := cpuTime.Get(pid); err != nil {
-		log.Error("getCPUTime get pid failed", zap.Error(err))
-	}
+	// TODO: calculate proc time on iOS, which doesn't include libproc
+	return 0
+	// pid := os.Getpid()
+	// cpuTime := sigar.ProcTime{}
+	// if err := cpuTime.Get(pid); err != nil {
+	// 	log.Error("getCPUTime get pid failed", zap.Error(err))
+	// }
 
-	return float64(cpuTime.User + cpuTime.Sys)
+	// return float64(cpuTime.User + cpuTime.Sys)
 }
 
 // TODO: Need a way to calculate in the case of multiple groups.
